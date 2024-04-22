@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient; //lo importamos para establecer una conexion a bases de datos
+using dominio; //va a usar clases de la libreria de clases dominio (alli reciden todos los modelos de dominio)
 
 
-namespace ejemplos_ado_dotnet
+namespace negocio
 {
-    class PokemonNegocio  //aca creamos los metodos de accesos a datos
+    public class PokemonNegocio  //aca creamos los metodos de accesos a datos
     {
         /*Creamos un metodo public para que pueda ser accedido desde el exterior. Para que lea registros de la DB creamos
         una lista. 
@@ -74,5 +75,15 @@ namespace ejemplos_ado_dotnet
             }
 
         }
+
+        public void agregar(Pokemon nuevo) //conectar a la db
+        {
+        }
+
+        public void modificar(Pokemon modificar)  //conectar a la db
+        { 
+        }
+
+
     }
 }
