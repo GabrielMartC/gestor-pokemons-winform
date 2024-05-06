@@ -55,6 +55,21 @@ namespace negocio
             
         }
 
+        public void ejecutarAccion() //para ejecutar la sentencia de INSERT 
+        {
+            comando.Connection = conexion;
+            try
+            {
+                conexion.Open();
+                comando.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
         public void cerrarConexion()
         {
             if (lector != null) //si realize una lectura y tengo el lector...

@@ -76,8 +76,28 @@ namespace negocio
 
         }
 
-        public void agregar(Pokemon nuevo) //conectar a la db
+        public void agregar(Pokemon nuevo) //agregar un nuevo pokemon a la db
         {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                //seteamos la consulta
+                //1RA FORMA
+                datos.setearConsulta("Insert Into POKEMONS (Numero, Nombre, Descripcion, Activo) Values (" + nuevo.Numero + ",'" + nuevo.Nombre + "','"+ nuevo.Descripcion +"',1)");
+                //datos.ejecutarLectura; Esto no se debe hacer, ya que esto no es una lectura, es un INSERT
+                datos.ejecutarAccion();
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
         }
 
         public void modificar(Pokemon modificar)  //conectar a la db
