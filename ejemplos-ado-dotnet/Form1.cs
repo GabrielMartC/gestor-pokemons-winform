@@ -24,18 +24,26 @@ namespace ejemplos_ado_dotnet
         private void wfPokemon_Load(object sender, EventArgs e)
         {
             PokemonNegocio negocio = new PokemonNegocio();
-            listaPokemon = negocio.listar();
-            dgvPokemons.DataSource = listaPokemon;
+            try
+            {
+                listaPokemon = negocio.listar();
+                dgvPokemons.DataSource = listaPokemon;
 
-            //negocio.listar(): va a la DB y te devuelve una lista de datos. 
-            //DataSource: recibe un origen de datos, y lo modela en la tabla.
+                //negocio.listar(): va a la DB y te devuelve una lista de datos. 
+                //DataSource: recibe un origen de datos, y lo modela en la tabla.
 
-            dgvPokemons.Columns["UrlImagen"].Visible = false; // Oculte la columna del urlImagen 
+                dgvPokemons.Columns["UrlImagen"].Visible = false; // Oculte la columna del urlImagen 
 
-            /*ya que tenemos los pokemons cargados, en el picture box cargamos una imagen.
-             "listaPokemon[0]" el 1er elemento de la lista de pokemons
-             "UrlImagen" su atributo de Url*/
-            cargarImagen(listaPokemon[0].UrlImagen); //presecciona la imagen del 1er elemento (1er pokemon)
+                /*ya que tenemos los pokemons cargados, en el picture box cargamos una imagen.
+                 "listaPokemon[0]" el 1er elemento de la lista de pokemons
+                 "UrlImagen" su atributo de Url*/
+                cargarImagen(listaPokemon[0].UrlImagen); //presecciona la imagen del 1er elemento (1er pokemon)
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            
         }
 
         private void dgvPokemons_SelectionChanged(object sender, EventArgs e)

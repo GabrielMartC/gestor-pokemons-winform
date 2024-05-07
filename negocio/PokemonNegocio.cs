@@ -53,7 +53,18 @@ namespace negocio
 
                     aux.Nombre = (string)lector["Nombre"];
                     aux.Descripcion = (string)lector["Descripcion"];
-                    aux.UrlImagen = (string)lector["UrlImagen"];
+
+                    //VALIDAR NULLS
+                    //1RA FORMA
+                    //if (!(lector.IsDBNull(lector.GetOrdinal("UrlImagen")))) // Si NO es nulo en la Columna UrlImagen, lo va a leer
+                    //{                                                       //GetOrdinal es para obtener la columna
+                    //    aux.UrlImagen = (string)lector["UrlImagen"];
+                    //}
+                    //2DA FORMA
+                    if (!(lector["UrlImagen"] is DBNull)) 
+                    {
+                        aux.UrlImagen = (string)lector["UrlImagen"];
+                    }
 
                     //como tipo no va a tener una instancia, porque cuando haga Tipo.Descripcion va a dar referencia nula
                     aux.Tipo = new Elemento();
@@ -84,7 +95,17 @@ namespace negocio
             {
                 //seteamos la consulta
                 //1RA FORMA
-                datos.setearConsulta("Insert Into POKEMONS (Numero, Nombre, Descripcion, Activo) Values (" + nuevo.Numero + ",'" + nuevo.Nombre + "','"+ nuevo.Descripcion +"',1)");
+                //datos.setearConsulta("Insert Into POKEMONS (Numero, Nombre, Descripcion, Activo, IdTipo, IdDebilidad) Values (" + nuevo.Numero + ",'" + nuevo.Nombre + "','"+ nuevo.Descripcion +"',1, "+ nuevo.Tipo.Id + ", "+ nuevo.Debilidad.Id +")"); //El activo esta por defecto en 1, pero tranquilamente podria estar por defecto en 1 PERO EN LA DB
+
+                //2DA FORMA 
+                datos.setearConsulta("Insert Into POKEMONS (Numero, Nombre, Descripcion, Activo, IdTipo, IdDebilidad) Values (@Numero, @Nombre, @Descripcion, 1, @IdTipo, @IdDebilidad)"); //"@algo" especie de variables 
+                //No podemos usar "comando.CommandText" ya que comando esta encapsulado.Para ello...
+                datos.setearParametro("@Numero", nuevo.Numero); //y esto va a reemplazar a c/u de los parametros del value de la anterior consulta
+                datos.setearParametro("@Nombre", nuevo.Nombre);
+                datos.setearParametro("@Descripcion", nuevo.Descripcion);
+                datos.setearParametro("@IdTipo", nuevo.Tipo.Id); 
+                datos.setearParametro("@IdDebilidad", nuevo.Debilidad.Id);
+
                 //datos.ejecutarLectura; Esto no se debe hacer, ya que esto no es una lectura, es un INSERT
                 datos.ejecutarAccion();
 
