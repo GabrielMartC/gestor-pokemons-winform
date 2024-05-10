@@ -23,6 +23,22 @@ namespace ejemplos_ado_dotnet
 
         private void wfPokemon_Load(object sender, EventArgs e)
         {
+            cargar();
+              
+        }
+
+        private void dgvPokemons_SelectionChanged(object sender, EventArgs e)
+        /*cuando seleccionamos un elemento en la lista, cambia la imagen. Tenemos que tomar el elemento seleccionado
+         en la lista*/
+        {
+            Pokemon seleccionado = (Pokemon)dgvPokemons.CurrentRow.DataBoundItem;
+                                         // grilla actual,la fila actual, dame el objeto enlazado (devuelve justamente un Object)
+                                         //para ello justamente al principio, hacemos casteo explicito.
+            cargarImagen(seleccionado.UrlImagen); //cada vez que haga click, va a cambiar la imagen
+        }
+
+        private void cargar() //carga de pokemons de la DB al dataGridView
+        {
             PokemonNegocio negocio = new PokemonNegocio();
             try
             {
@@ -43,17 +59,6 @@ namespace ejemplos_ado_dotnet
             {
                 MessageBox.Show(ex.ToString());
             }
-            
-        }
-
-        private void dgvPokemons_SelectionChanged(object sender, EventArgs e)
-        /*cuando seleccionamos un elemento en la lista, cambia la imagen. Tenemos que tomar el elemento seleccionado
-         en la lista*/
-        {
-            Pokemon seleccionado = (Pokemon)dgvPokemons.CurrentRow.DataBoundItem;
-                                         // grilla actual,la fila actual, dame el objeto enlazado (devuelve justamente un Object)
-                                         //para ello justamente al principio, hacemos casteo explicito.
-            cargarImagen(seleccionado.UrlImagen); //cada vez que haga click, va a cambiar la imagen
         }
 
         private void cargarImagen(string imagen)
@@ -71,7 +76,8 @@ namespace ejemplos_ado_dotnet
         private void btnAgregar_Click(object sender, EventArgs e)
         {
             frmAltaPokemon alta = new frmAltaPokemon();
-            alta.ShowDialog();
+            alta.ShowDialog(); //indicador de todo ok
+            cargar();   //actualizar la carga del poke en el dataGridView
         }
     }
 }

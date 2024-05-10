@@ -98,13 +98,14 @@ namespace negocio
                 //datos.setearConsulta("Insert Into POKEMONS (Numero, Nombre, Descripcion, Activo, IdTipo, IdDebilidad) Values (" + nuevo.Numero + ",'" + nuevo.Nombre + "','"+ nuevo.Descripcion +"',1, "+ nuevo.Tipo.Id + ", "+ nuevo.Debilidad.Id +")"); //El activo esta por defecto en 1, pero tranquilamente podria estar por defecto en 1 PERO EN LA DB
 
                 //2DA FORMA 
-                datos.setearConsulta("Insert Into POKEMONS (Numero, Nombre, Descripcion, Activo, IdTipo, IdDebilidad) Values (@Numero, @Nombre, @Descripcion, 1, @IdTipo, @IdDebilidad)"); //"@algo" especie de variables 
+                datos.setearConsulta("Insert Into POKEMONS (Numero, Nombre, Descripcion, Activo, IdTipo, IdDebilidad, UrlImagen) Values (@Numero, @Nombre, @Descripcion, 1, @IdTipo, @IdDebilidad, @UrlImagen)"); //"@algo" especie de variables 
                 //No podemos usar "comando.CommandText" ya que comando esta encapsulado.Para ello...
                 datos.setearParametro("@Numero", nuevo.Numero); //y esto va a reemplazar a c/u de los parametros del value de la anterior consulta
                 datos.setearParametro("@Nombre", nuevo.Nombre);
                 datos.setearParametro("@Descripcion", nuevo.Descripcion);
                 datos.setearParametro("@IdTipo", nuevo.Tipo.Id); 
                 datos.setearParametro("@IdDebilidad", nuevo.Debilidad.Id);
+                datos.setearParametro("@UrlImagen", nuevo.UrlImagen);
 
                 //datos.ejecutarLectura; Esto no se debe hacer, ya que esto no es una lectura, es un INSERT
                 datos.ejecutarAccion();

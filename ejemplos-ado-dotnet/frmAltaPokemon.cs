@@ -39,6 +39,8 @@ namespace ejemplos_ado_dotnet
                 poke.Nombre = tbNombre.Text;
                 poke.Descripcion = tbDescripcion.Text;
 
+                poke.UrlImagen = tbUrlImagen.Text; //para mandar a la DB la url de la imagen
+
                 poke.Tipo = (Elemento)cboTipo.SelectedItem; //casteo explicito porque "cboTipo.SelectedItem" emvia un object
                 poke.Debilidad = (Elemento)cboDebilidad.SelectedItem;
 
@@ -70,6 +72,28 @@ namespace ejemplos_ado_dotnet
             {
 
                 MessageBox.Show(ex.ToString());
+            }
+        }
+
+        private void tbUrlImagen_Leave(object sender, EventArgs e) 
+        //cuando terminemos de ingresar la url en el textbox, nos va a mostrar
+        //una preview de la imagen (va a intentar cargarla)
+        {
+            cargarImagen(tbUrlImagen.Text);
+        }
+
+        private void cargarImagen(string imagen)
+        //ESTE METODO ESTA REPETIDO (ya aparece en Form1.cs), pero por ahora sirve. Lo
+        //ideal seria que este dentro de una clase "helper" en la cual almacenar los
+        //metodos para usarlos en distintas clases
+        {
+            try
+            {
+                pbPokemonPreview.Load(imagen); 
+            }
+            catch (Exception)  
+            {
+                pbPokemonPreview.Load("https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1");
             }
         }
     }
