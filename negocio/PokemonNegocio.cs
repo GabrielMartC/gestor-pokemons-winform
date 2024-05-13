@@ -35,7 +35,7 @@ namespace negocio
                 //comando.CommandText = "Select Numero, Nombre, Descripcion, UrlImagen from POKEMONS"; //consulta que enviamos a la DB
 
                 //CONSULTA CON 2 TABLAS
-                comando.CommandText = "Select Numero, Nombre, P.Descripcion, UrlImagen, E.Descripcion As Tipo, D.Descripcion As Debilidad From POKEMONS P, ELEMENTOS E, ELEMENTOS D Where E.Id = P.IdTipo and D.Id = P.IdDebilidad"; 
+                comando.CommandText = "Select Numero, Nombre, P.Descripcion, UrlImagen, E.Descripcion As Tipo, D.Descripcion As Debilidad, P.IdTipo, P.IdDebilidad, P.Id From POKEMONS P, ELEMENTOS E, ELEMENTOS D Where E.Id = P.IdTipo and D.Id = P.IdDebilidad"; 
 
                 comando.Connection = conexion; //va a ejecutar el comando de la linea anterior
 
@@ -45,6 +45,7 @@ namespace negocio
                 while (lector.Read()) //si hay un registro a continuacion devuelve true, y apuntando a c/u los registros de la DB
                 {
                     Pokemon aux = new Pokemon();
+                    aux.Id = (int)lector["Id"];
                     /**/
                     //aux.Numero = lector.GetInt32(0); //1ra forma
 
@@ -67,9 +68,11 @@ namespace negocio
                     }
 
                     //como tipo no va a tener una instancia, porque cuando haga Tipo.Descripcion va a dar referencia nula
-                    aux.Tipo = new Elemento();
+                    aux.Tipo = new Elemento(); //creo una instancia de la clase Elemento
+                    aux.Tipo.Id = (int)lector["IdTipo"]; //con este dato el pokemon va a poder traer el id de su tipo...
                     aux.Tipo.Descripcion = (string)lector["Tipo"];
                     aux.Debilidad = new Elemento(); //idem que el anterior
+                    aux.Debilidad.Id = (int)lector["IdDebilidad"]; //con este dato el pokemon va a poder traer el id de su debilidad...
                     aux.Debilidad.Descripcion = (string)lector["Debilidad"];
 
                     lista.Add(aux); //agrega dato a la lista
@@ -122,8 +125,28 @@ namespace negocio
             }
         }
 
-        public void modificar(Pokemon modificar)  //conectar a la db
-        { 
+        public void modificar(Pokemon poke)  //conectar a la db
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.setearConsulta("Update POKEMONS set Numero = @numero, Nombre = @nombre, Descripcion = @descripcion, UrlImagen = @urlImagen, IdTipo = @idTipo, IdDebilidad = @idDebilidad Where Id = @id");
+                datos.setearParametro("@numero", poke.Numero);
+                datos.setearParametro("@nombre", poke.Nombre);
+                datos.setearParametro("@descripcion", poke.Descripcion);
+                datos.setearParametro("@urlImagen", poke.UrlImagen);
+                datos.setearParametro("@idTipo", poke.Tipo.Id);
+                datos.setearParametro("@idDebilidad", poke.Debilidad.Id);
+                datos.setearParametro("@id", poke.Id);
+
+                datos.ejecutarLectura();
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
 
 

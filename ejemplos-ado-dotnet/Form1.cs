@@ -49,6 +49,7 @@ namespace ejemplos_ado_dotnet
                 //DataSource: recibe un origen de datos, y lo modela en la tabla.
 
                 dgvPokemons.Columns["UrlImagen"].Visible = false; // Oculte la columna del urlImagen 
+                dgvPokemons.Columns["Id"].Visible = false; //idem anterior
 
                 /*ya que tenemos los pokemons cargados, en el picture box cargamos una imagen.
                  "listaPokemon[0]" el 1er elemento de la lista de pokemons
@@ -78,6 +79,20 @@ namespace ejemplos_ado_dotnet
             frmAltaPokemon alta = new frmAltaPokemon();
             alta.ShowDialog(); //indicador de todo ok
             cargar();   //actualizar la carga del poke en el dataGridView
+        }
+
+        private void btnModificar_Click(object sender, EventArgs e)
+        {
+            Pokemon seleccionado;
+            seleccionado = (Pokemon)dgvPokemons.CurrentRow.DataBoundItem; //el pokemon que esta seleccionado e la lista
+
+            frmAltaPokemon modificar = new frmAltaPokemon(seleccionado); //creamos el form para dar
+                                                                         //el alta, pero con los datos
+                                                                         //del el pokemon seleccionado 
+                                                                         //en la lista
+
+            modificar.ShowDialog(); 
+            cargar();   
         }
     }
 }

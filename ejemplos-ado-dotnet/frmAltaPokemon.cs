@@ -14,9 +14,17 @@ namespace ejemplos_ado_dotnet
 {
     public partial class frmAltaPokemon : Form
     {
+        private Pokemon pokemon = null; //por defecto, el form se crea con un pokemon en null
         public frmAltaPokemon()
         {
             InitializeComponent();
+        }
+
+        public frmAltaPokemon(Pokemon pokemon)
+        {
+            InitializeComponent();
+            this.pokemon = pokemon;
+            Text = "Modificar Pokemon";
         }
 
         private void btnCancelar_Click(object sender, EventArgs e)
@@ -29,24 +37,37 @@ namespace ejemplos_ado_dotnet
             //vamos a tener que leer los datos de los elementos ingresados
             //para transformarlos en un objeto de tipo pokemon...
 
-            Pokemon poke = new Pokemon();
+
             PokemonNegocio negocio = new PokemonNegocio();  
 
             try
             {
-                //seteamos los datos...
-                poke.Numero = int.Parse(tbNumero.Text);
-                poke.Nombre = tbNombre.Text;
-                poke.Descripcion = tbDescripcion.Text;
+                if(pokemon == null) //validamos, si el pokemon es null...
+                {
+                    this.pokemon = new Pokemon();   //queremos agregar un pokemon numevo... el anterior pokemon declarado ya no es null
+                }
+                //seteamos los datos... (sea tanto para LEER o para MODIFICAR)
+                pokemon.Numero = int.Parse(tbNumero.Text);
+                pokemon.Nombre = tbNombre.Text;
+                pokemon.Descripcion = tbDescripcion.Text;
 
-                poke.UrlImagen = tbUrlImagen.Text; //para mandar a la DB la url de la imagen
+                pokemon.UrlImagen = tbUrlImagen.Text; //para mandar a la DB la url de la imagen
 
-                poke.Tipo = (Elemento)cboTipo.SelectedItem; //casteo explicito porque "cboTipo.SelectedItem" emvia un object
-                poke.Debilidad = (Elemento)cboDebilidad.SelectedItem;
+                pokemon.Tipo = (Elemento)cboTipo.SelectedItem; //casteo explicito porque "cboTipo.SelectedItem" emvia un object
+                pokemon.Debilidad = (Elemento)cboDebilidad.SelectedItem;
 
-                //para mandarlo a la db (con PokemonNegocio)
-                negocio.agregar(poke);
-                MessageBox.Show("Agregado exitosamente!");
+                if(pokemon.Id != 0) //validamos que queremos hacer con el pokemon
+                { //estoy queriendo modificar un pokemon existente
+                    negocio.modificar(pokemon);
+                    MessageBox.Show("Modificado exitosamente!");
+                }
+                else
+                { //estoy queriendo agregar un pokemon nuevo
+                    //para mandarlo a la db (con PokemonNegocio)
+                    negocio.agregar(pokemon);
+                    MessageBox.Show("Agregado exitosamente!");
+                }
+                
                 this.Close();
             }
 
@@ -63,10 +84,33 @@ namespace ejemplos_ado_dotnet
             ElementoNegocio elementoNegocio = new ElementoNegocio();
             try
             {
-                cboTipo.DataSource = elementoNegocio.listar();
+                cboTipo.DataSource = elementoNegocio.listar(); //lo que hacemos aca es cargar al desplegable una lista de Objetos de tipo Elemento
+                cboTipo.ValueMember = "Id";    //el valor clave...
+                cboTipo.DisplayMember = "Descripcion"; //lo que vamos a mostrar...
+                //ValueMember y DisplayMember son los nombres de las propiedades de la Class Elemento
                 cboDebilidad.DataSource = elementoNegocio.listar();
-                //a pesar de tener los mismos valores, ambos son distintos comboBox asi que
+                cboDebilidad.ValueMember = "Id";//repetimos como anteriomente...
+                cboDebilidad.DisplayMember = "Descripcion";
+                //(cboTipo y cboDebilidad) a pesar de tener los mismos valores, ambos son distintos comboBox asi que
                 //para que no se rompan, los cargamos por separado para c/u
+
+                if (pokemon != null) //validamos el pokemon
+                {
+                    //hay datos para modificar...
+                    tbNumero.Text = pokemon.Numero.ToString();    
+                    tbNombre.Text = pokemon.Nombre;
+                    tbUrlImagen.Text = pokemon.UrlImagen;
+                    cargarImagen(pokemon.UrlImagen); //Precarga la imagen en el modificar, si no hay imagen muestra por defecto el de vacio.
+                    tbDescripcion.Text = pokemon.Descripcion;
+
+                    //para los desplegables...
+                    cboTipo.SelectedValue = pokemon.Tipo.Id;
+                    cboDebilidad.SelectedValue = pokemon.Debilidad.Id;
+                }
+                else
+                {
+                    //es uno nuevo...
+                }
             }
             catch (Exception ex)
             {

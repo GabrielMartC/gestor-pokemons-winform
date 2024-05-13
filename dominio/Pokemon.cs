@@ -9,6 +9,8 @@ namespace dominio
 {
     public class Pokemon
     {
+        public int Id {  get; set; }
+
         //annotations: en este caso, sirve para cambiar el nombre de una clase
         //en una columna (algo asi como usar un 'as' en SQL) pero solo en la parte
         //visual.
