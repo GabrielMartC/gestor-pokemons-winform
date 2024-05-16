@@ -35,7 +35,7 @@ namespace negocio
                 //comando.CommandText = "Select Numero, Nombre, Descripcion, UrlImagen from POKEMONS"; //consulta que enviamos a la DB
 
                 //CONSULTA CON 2 TABLAS
-                comando.CommandText = "Select Numero, Nombre, P.Descripcion, UrlImagen, E.Descripcion As Tipo, D.Descripcion As Debilidad, P.IdTipo, P.IdDebilidad, P.Id From POKEMONS P, ELEMENTOS E, ELEMENTOS D Where E.Id = P.IdTipo and D.Id = P.IdDebilidad"; 
+                comando.CommandText = "Select Numero, Nombre, P.Descripcion, UrlImagen, E.Descripcion As Tipo, D.Descripcion As Debilidad, P.IdTipo, P.IdDebilidad, P.Id From POKEMONS P, ELEMENTOS E, ELEMENTOS D Where E.Id = P.IdTipo and D.Id = P.IdDebilidad and P.Activo = 1"; 
 
                 comando.Connection = conexion; //va a ejecutar el comando de la linea anterior
 
@@ -90,7 +90,7 @@ namespace negocio
 
         }
 
-        public void agregar(Pokemon nuevo) //agregar un nuevo pokemon a la db
+        public void agregar(Pokemon nuevo) //agregar un nuevo poke a la db
         {
             AccesoDatos datos = new AccesoDatos();
 
@@ -125,7 +125,7 @@ namespace negocio
             }
         }
 
-        public void modificar(Pokemon poke)  //conectar a la db
+        public void modificar(Pokemon poke)  //modifica un poke de la db
         {
             AccesoDatos datos = new AccesoDatos();
             try
@@ -141,6 +141,37 @@ namespace negocio
 
                 datos.ejecutarLectura();
 
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public void eliminar(int id) //elimina un poke de la db
+        {
+            try
+            {
+                AccesoDatos datos = new AccesoDatos();
+                datos.setearConsulta("Delete From POKEMONS Where Id = @id");
+                datos.setearParametro("@id",id);
+                datos.ejecutarAccion();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        } 
+
+        public void eliminarLogico(int id) //cambia el estado de un poke a INACTIVO
+        {
+            try
+            {
+                AccesoDatos datos = new AccesoDatos();
+                datos.setearConsulta("Update POKEMONS Set Activo=0 Where Id = @id");
+                datos.setearParametro("@id", id);
+                datos.ejecutarAccion();
             }
             catch (Exception ex)
             {

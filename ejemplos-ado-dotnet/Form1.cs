@@ -42,12 +42,8 @@ namespace ejemplos_ado_dotnet
             PokemonNegocio negocio = new PokemonNegocio();
             try
             {
-                listaPokemon = negocio.listar();
-                dgvPokemons.DataSource = listaPokemon;
-
-                //negocio.listar(): va a la DB y te devuelve una lista de datos. 
-                //DataSource: recibe un origen de datos, y lo modela en la tabla.
-
+                listaPokemon = negocio.listar(); //va a la DB y te devuelve una lista de datos.
+                dgvPokemons.DataSource = listaPokemon; //DataSource: recibe un origen de datos, y lo modela en la tabla.
                 dgvPokemons.Columns["UrlImagen"].Visible = false; // Oculte la columna del urlImagen 
                 dgvPokemons.Columns["Id"].Visible = false; //idem anterior
 
@@ -93,6 +89,52 @@ namespace ejemplos_ado_dotnet
 
             modificar.ShowDialog(); 
             cargar();   
+        }
+
+        private void btnEliminarFisico_Click(object sender, EventArgs e) //en una app real, solo debe haber 1 solo tipo de eliminacion...
+        {
+            eliminar();
+            
+        }
+
+        private void btnEliminarLogico_Click(object sender, EventArgs e)
+        {
+            eliminar(true);
+            
+        }
+
+        private void eliminar (bool logico = false) //metodo que va a ejecutar la logica principal de los eliminar
+        //si no le mando un parametro, va a tomar falso por defecto: significa que la eliminacion NO es logica
+
+        {
+            PokemonNegocio negocio = new PokemonNegocio();
+            Pokemon seleccionado;
+            try
+            {
+                //la linea de abajo devuelve un dialog result. Sirve para agregar una interaccion en el messageBo
+                //En este caso, para preguntar si de VERDAD quiere eliminar al pokemon.
+                DialogResult respuesta = MessageBox.Show("De verdad queres eliminarlo?", "Eliminando", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (respuesta == DialogResult.Yes) //Si dice que si, lo borra. Si dice que no, no hace nada.
+                {
+                    seleccionado = (Pokemon)dgvPokemons.CurrentRow.DataBoundItem; //el poke seleccionado en la grilla
+
+                    if (logico)
+                    {
+                        negocio.eliminarLogico(seleccionado.Id);
+                    }
+                    else
+                    {
+                        negocio.eliminar(seleccionado.Id);
+                    }
+
+                    cargar();//se actualiza la grilla
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+
         }
     }
 }
