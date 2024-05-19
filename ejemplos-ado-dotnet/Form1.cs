@@ -31,10 +31,14 @@ namespace ejemplos_ado_dotnet
         /*cuando seleccionamos un elemento en la lista, cambia la imagen. Tenemos que tomar el elemento seleccionado
          en la lista*/
         {
-            Pokemon seleccionado = (Pokemon)dgvPokemons.CurrentRow.DataBoundItem;
-                                         // grilla actual,la fila actual, dame el objeto enlazado (devuelve justamente un Object)
-                                         //para ello justamente al principio, hacemos casteo explicito.
-            cargarImagen(seleccionado.UrlImagen); //cada vez que haga click, va a cambiar la imagen
+            
+            if (dgvPokemons.CurrentRow != null) //si la fila no esta vacia... 
+            {
+                Pokemon seleccionado = (Pokemon)dgvPokemons.CurrentRow.DataBoundItem;
+                // grilla actual,la fila actual, dame el objeto enlazado (devuelve justamente un Object)
+                //para ello justamente al principio, hacemos casteo explicito.
+                cargarImagen(seleccionado.UrlImagen); //cada vez que haga click, va a cambiar la imagen
+            }
         }
 
         private void cargar() //carga de pokemons de la DB al dataGridView
@@ -44,8 +48,7 @@ namespace ejemplos_ado_dotnet
             {
                 listaPokemon = negocio.listar(); //va a la DB y te devuelve una lista de datos.
                 dgvPokemons.DataSource = listaPokemon; //DataSource: recibe un origen de datos, y lo modela en la tabla.
-                dgvPokemons.Columns["UrlImagen"].Visible = false; // Oculte la columna del urlImagen 
-                dgvPokemons.Columns["Id"].Visible = false; //idem anterior
+                ocultarColumnas(); //metodo que oculta determinadas columnas en el dataGridView
 
                 /*ya que tenemos los pokemons cargados, en el picture box cargamos una imagen.
                  "listaPokemon[0]" el 1er elemento de la lista de pokemons
@@ -56,6 +59,12 @@ namespace ejemplos_ado_dotnet
             {
                 MessageBox.Show(ex.ToString());
             }
+        }
+
+        private void ocultarColumnas()
+        {
+                dgvPokemons.Columns["UrlImagen"].Visible = false; // Oculte la columna del urlImagen 
+                dgvPokemons.Columns["Id"].Visible = false; //idem anterior
         }
 
         private void cargarImagen(string imagen)
@@ -135,6 +144,71 @@ namespace ejemplos_ado_dotnet
                 MessageBox.Show(ex.ToString());
             }
 
+        }
+
+        private void btnFiltro_Click(object sender, EventArgs e)
+        {
+            ////filtro rapido, sin ir a la DB, utilizando la lista privada
+            //List<Pokemon> listaFiltrada; //No le generamos una instancia porque la voy a obtener de un filtro que voy a aplicar.
+            //string filtro = tbFiltro.Text;
+            
+            //if (filtro != "") //si en el textbox de filtro no esta vacio,
+            //                  //devuelve segun filtro
+            //{
+            //    listaFiltrada = listaPokemon.FindAll(x => x.Nombre.ToUpper().Contains(filtro.ToUpper()) || x.Tipo.Descripcion.ToUpper().Contains(filtro.ToUpper()));
+            //    //-     FindAll es un metodo de los collections, es el metodo que va a
+            //    //devolver todos los objetos que macheen con la clave de busqueda que yo le
+            //    //voy a dar. Por otra parte, en el parametro empleamos una Expresion Lambda,
+            //    //es una suerte de Foreach contra la lista, vuelta por vuelta va a evaluar
+            //    //si el nombre de ese objeto es igual al filtro que especificamos. Si es
+            //    //igual es true, si no es false, es decir, devuelve un boolean. (El Find devuelve 1 solo...)
+            //    //-     ToUpper para pasar todo a MAYUSCULA
+            //    //-     Contains() para comparar pero segun una determinada cadena. Devuelve un bool
+
+            //    //Por ahora estamos filtrando solo por Nombre o Tipo... 
+            //}
+            //else
+            //{
+            //    //si en el textbox de filtro esta vacio, devuelve todos los registros sin filtrar
+            //    listaFiltrada = listaPokemon; 
+            //}
+
+            
+            //dgvPokemons.DataSource = null; //primero limpiamos
+            //dgvPokemons.DataSource = listaFiltrada;
+            //ocultarColumnas();
+        }
+
+        private void tbFiltro_TextChanged(object sender, EventArgs e) //Filtro Mejorado para filtrar mientra se ingresa el texto
+        {
+            //filtro sin ir a la DB, utilizando la lista privada
+            List<Pokemon> listaFiltrada; //No le generamos una instancia porque la voy a obtener de un filtro que voy a aplicar.
+            string filtro = tbFiltro.Text;
+
+            if (filtro.Length >= 4) //si el textbox de filtro tiene mas de 4 caracteres,
+                                    //devuelve segun filtro
+            {
+                listaFiltrada = listaPokemon.FindAll(x => x.Nombre.ToUpper().Contains(filtro.ToUpper()) || x.Tipo.Descripcion.ToUpper().Contains(filtro.ToUpper()));
+                //-     FindAll es un metodo de los collections, es el metodo que va a
+                //devolver todos los objetos que macheen con la clave de busqueda que yo le
+                //voy a dar. Por otra parte, en el parametro empleamos una Expresion Lambda,
+                //es una suerte de Foreach contra la lista, vuelta por vuelta va a evaluar
+                //si el nombre de ese objeto es igual al filtro que especificamos. Si es
+                //igual es true, si no es false, es decir, devuelve un boolean. (El Find devuelve 1 solo...)
+                //-     ToUpper para pasar todo a MAYUSCULA
+                //-     Contains() para comparar pero segun una determinada cadena. Devuelve un bool
+
+                //Por ahora estamos filtrando solo por Nombre o Tipo... 
+            }
+            else
+            {
+                //si en el textbox de filtro esta vacio, devuelve todos los registros sin filtrar
+                listaFiltrada = listaPokemon;
+            }
+
+            dgvPokemons.DataSource = null; //primero limpiamos
+            dgvPokemons.DataSource = listaFiltrada;
+            ocultarColumnas();
         }
     }
 }
