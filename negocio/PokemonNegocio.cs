@@ -180,6 +180,116 @@ namespace negocio
             }
         }
 
+        public List<Pokemon> filtrar(string campo, string criterio, string filtro) 
+            //FILTRO AVANZADO, va a la DB
+        {
+            List <Pokemon> lista = new List<Pokemon>();
+            AccesoDatos datos = new AccesoDatos();
 
+            try
+            {
+                string consulta = "Select Numero, Nombre, P.Descripcion, UrlImagen, E.Descripcion As Tipo, D.Descripcion As Debilidad, P.IdTipo, P.IdDebilidad, P.Id From POKEMONS P, ELEMENTOS E, ELEMENTOS D Where E.Id = P.IdTipo And D.Id = P.IdDebilidad And P.Activo = 1 And ";
+                //dejamos espacion para concatenar posibles filtros...
+
+                switch (campo)
+                {
+                    case "Número":
+                        switch (criterio)
+                        {
+                            case "Mayor a":
+                                consulta += "Numero > " + filtro;
+                                break;
+
+                            case "Menor a":
+                                consulta += "Numero < " + filtro;
+                                break;
+
+                            case "Igual a":
+                                consulta += "Numero = " + filtro;
+                                break;
+
+                            default:
+                                break;
+                        }                  
+                        break;
+
+                    case "Nombre":
+                        switch (criterio) 
+                        {
+                            case "Comenza con":
+                                consulta += "Nombre LIKE '"+ filtro +"%'";
+                                break;
+
+                            case "Termina con":
+                                consulta += "Nombre LIKE '%"+ filtro +"'";
+                                break;
+
+                            case "Contiene":
+                                consulta += "Nombre LIKE '%" + filtro +"%'";
+                                break;
+
+                            default:
+                                break;
+                        }
+                        break;
+
+                    case "Descripción":
+                        switch (criterio)
+                        {
+                            case "Comenza con":
+                                consulta += "P.Descripcion LIKE '" + filtro + "%'";
+                                break;
+
+                            case "Termina con":
+                                consulta += "P.Descripcion LIKE '%" + filtro + "'";
+                                break;
+
+                            case "Contiene":
+                                consulta += "P.Descripcion LIKE '%" + filtro + "%'";
+                                break;
+
+                            default:
+                                break;
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+                datos.setearConsulta(consulta);
+                datos.ejecutarLectura();
+
+                while (datos.Lector.Read()) //esto esta repetido, podria mejorarse...
+                {
+                    Pokemon aux = new Pokemon();
+                    aux.Id = (int)datos.Lector["Id"];
+                    aux.Numero = (int)datos.Lector["Numero"];
+                    aux.Nombre = (string)datos.Lector["Nombre"];
+                    aux.Descripcion = (string)datos.Lector["Descripcion"];
+
+                    if (!(datos.Lector["UrlImagen"] is DBNull))
+                    {
+                        aux.UrlImagen = (string)datos.Lector["UrlImagen"];
+                    }
+
+                    aux.Tipo = new Elemento(); //creo una instancia de la clase Elemento
+                    aux.Tipo.Id = (int)datos.Lector["IdTipo"]; //con este dato el pokemon va a poder traer el id de su tipo...
+                    aux.Tipo.Descripcion = (string)datos.Lector["Tipo"];
+                    aux.Debilidad = new Elemento(); //idem que el anterior
+                    aux.Debilidad.Id = (int)datos.Lector["IdDebilidad"]; //con este dato el pokemon va a poder traer el id de su debilidad...
+                    aux.Debilidad.Descripcion = (string)datos.Lector["Debilidad"];
+
+                    lista.Add(aux); //agrega dato a la lista
+                }
+
+                return lista; //retorna una nueva lista con el/los pokemons segun las especificaciones del filtro avanzado
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
     }
 }

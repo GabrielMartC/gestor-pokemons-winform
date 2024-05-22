@@ -24,7 +24,11 @@ namespace ejemplos_ado_dotnet
         private void wfPokemon_Load(object sender, EventArgs e)
         {
             cargar();
-              
+            cbCampo.Items.Add("Número");
+            cbCampo.Items.Add("Nombre");
+            cbCampo.Items.Add("Descripción");
+
+
         }
 
         private void dgvPokemons_SelectionChanged(object sender, EventArgs e)
@@ -148,35 +152,19 @@ namespace ejemplos_ado_dotnet
 
         private void btnFiltro_Click(object sender, EventArgs e)
         {
-            ////filtro rapido, sin ir a la DB, utilizando la lista privada
-            //List<Pokemon> listaFiltrada; //No le generamos una instancia porque la voy a obtener de un filtro que voy a aplicar.
-            //string filtro = tbFiltro.Text;
-            
-            //if (filtro != "") //si en el textbox de filtro no esta vacio,
-            //                  //devuelve segun filtro
-            //{
-            //    listaFiltrada = listaPokemon.FindAll(x => x.Nombre.ToUpper().Contains(filtro.ToUpper()) || x.Tipo.Descripcion.ToUpper().Contains(filtro.ToUpper()));
-            //    //-     FindAll es un metodo de los collections, es el metodo que va a
-            //    //devolver todos los objetos que macheen con la clave de busqueda que yo le
-            //    //voy a dar. Por otra parte, en el parametro empleamos una Expresion Lambda,
-            //    //es una suerte de Foreach contra la lista, vuelta por vuelta va a evaluar
-            //    //si el nombre de ese objeto es igual al filtro que especificamos. Si es
-            //    //igual es true, si no es false, es decir, devuelve un boolean. (El Find devuelve 1 solo...)
-            //    //-     ToUpper para pasar todo a MAYUSCULA
-            //    //-     Contains() para comparar pero segun una determinada cadena. Devuelve un bool
+            PokemonNegocio negocio = new PokemonNegocio(); //nos va a devolver una lista
+            try
+            {
+                string campo = cbCampo.SelectedItem.ToString();
+                string criterio = cbCriterio.SelectedItem.ToString();
+                string filtro = tbFiltroAvanzado.Text;
+                dgvPokemons.DataSource = negocio.filtrar(campo, criterio, filtro);
 
-            //    //Por ahora estamos filtrando solo por Nombre o Tipo... 
-            //}
-            //else
-            //{
-            //    //si en el textbox de filtro esta vacio, devuelve todos los registros sin filtrar
-            //    listaFiltrada = listaPokemon; 
-            //}
-
-            
-            //dgvPokemons.DataSource = null; //primero limpiamos
-            //dgvPokemons.DataSource = listaFiltrada;
-            //ocultarColumnas();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
 
         private void tbFiltro_TextChanged(object sender, EventArgs e) //Filtro Mejorado para filtrar mientra se ingresa el texto
@@ -209,6 +197,25 @@ namespace ejemplos_ado_dotnet
             dgvPokemons.DataSource = null; //primero limpiamos
             dgvPokemons.DataSource = listaFiltrada;
             ocultarColumnas();
+        }
+
+        private void cbCampo_SelectedIndexChanged(object sender, EventArgs e) //para los items del comboBox de campo
+        {
+            string opcion = cbCampo.SelectedItem.ToString(); //puede ser nombre, numero, texto
+            if (opcion == "Número") //se va a seleccionar un numero
+            {
+                cbCriterio.Items.Clear();
+                cbCriterio.Items.Add("Mayor a");
+                cbCriterio.Items.Add("Menor a");
+                cbCriterio.Items.Add("Igual a");
+            }
+            else //se va a seleccionar un string (nombre o descripcion)
+            {
+                cbCriterio.Items.Clear();
+                cbCriterio.Items.Add("Comenza con");
+                cbCriterio.Items.Add("Termina con");
+                cbCriterio.Items.Add("Contiene");
+            }
         }
     }
 }
