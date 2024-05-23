@@ -9,12 +9,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using negocio;
+using System.IO; //para manejar ARCHIVOS (ej imagenes)
+using System.Configuration; //para usar configuraciones de App.config
 
 namespace ejemplos_ado_dotnet
 {
     public partial class frmAltaPokemon : Form
     {
         private Pokemon pokemon = null; //por defecto, el form se crea con un pokemon en null
+        private OpenFileDialog archivo = null; //archivo que va a contener la imagen
         public frmAltaPokemon()
         {
             InitializeComponent();
@@ -51,7 +54,20 @@ namespace ejemplos_ado_dotnet
                 pokemon.Nombre = tbNombre.Text;
                 pokemon.Descripcion = tbDescripcion.Text;
 
-                pokemon.UrlImagen = tbUrlImagen.Text; //para mandar a la DB la url de la imagen
+                //Para la imagen, primero hacemos una validacion en donde...
+                //guardo imagen si la levanto localmente
+                if (archivo != null && !(tbUrlImagen.Text.ToUpper().Contains("HTTP")))
+                //si el archivo no es nulo y NO contiene http en la url, estas intentando guardar una imagen local
+                {
+                    File.Copy(archivo.FileName, ConfigurationManager.AppSettings["images-folder"] + archivo.SafeFileName); //clase File para manejar archivos
+                    //quiero setear la nueva ruta del archivo...
+                    pokemon.UrlImagen = ConfigurationManager.AppSettings["images-folder"] + archivo.SafeFileName;
+                }
+                else //la imagen no es local, es un url...
+                {
+                    pokemon.UrlImagen = tbUrlImagen.Text; //para mandar a la DB la url de la imagen
+
+                }
 
                 pokemon.Tipo = (Elemento)cboTipo.SelectedItem; //casteo explicito porque "cboTipo.SelectedItem" emvia un object
                 pokemon.Debilidad = (Elemento)cboDebilidad.SelectedItem;
@@ -67,7 +83,16 @@ namespace ejemplos_ado_dotnet
                     negocio.agregar(pokemon);
                     MessageBox.Show("Agregado exitosamente!");
                 }
-                
+
+                ////guardo imagen si la levanto localmente
+                //if (archivo != null && !(tbUrlImagen.Text.ToUpper().Contains("HTTP")))
+                //    //si el archivo no es nulo y NO contiene http en la url, estas intentando guardar una imagen local
+                //{
+                //    File.Copy(archivo.FileName, ConfigurationManager.AppSettings["images-folder"] + archivo.SafeFileName); //clase File para manejar archivos
+                //    //quiero setear la nueva ruta del archivo...
+                //    pokemon.UrlImagen = ConfigurationManager.AppSettings["images-folder"] + archivo.SafeFileName;
+                //}
+
                 this.Close();
             }
 
@@ -138,6 +163,17 @@ namespace ejemplos_ado_dotnet
             catch (Exception)  
             {
                 pbPokemonPreview.Load("https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1");
+            }
+        }
+
+        private void btnAgregarImagen_Click(object sender, EventArgs e) //agregar imagen local
+        {
+            archivo = new OpenFileDialog(); //esto genera una ventna de dialogo
+            archivo.Filter = "jpg|*.jpg|png|*.png"; //especifica que tipo de datos puede abrir (ej: aca podemos corgar jpgs y pngs)
+            if (archivo.ShowDialog() == DialogResult.OK) //si la ventana se abre correctamente...
+            {
+                tbUrlImagen.Text = archivo.FileName; //guarda la ruta completa del archivo
+                cargarImagen(archivo.FileName); //previsualizar la imagen
             }
         }
     }

@@ -43,6 +43,7 @@
             this.lblUrlImagen = new System.Windows.Forms.Label();
             this.tbUrlImagen = new System.Windows.Forms.TextBox();
             this.pbPokemonPreview = new System.Windows.Forms.PictureBox();
+            this.btnAgregarImagen = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pbPokemonPreview)).BeginInit();
             this.SuspendLayout();
             // 
@@ -161,7 +162,7 @@
             // 
             // tbUrlImagen
             // 
-            this.tbUrlImagen.Location = new System.Drawing.Point(135, 108);
+            this.tbUrlImagen.Location = new System.Drawing.Point(135, 107);
             this.tbUrlImagen.Name = "tbUrlImagen";
             this.tbUrlImagen.Size = new System.Drawing.Size(121, 20);
             this.tbUrlImagen.TabIndex = 2;
@@ -169,18 +170,29 @@
             // 
             // pbPokemonPreview
             // 
-            this.pbPokemonPreview.Location = new System.Drawing.Point(287, 42);
+            this.pbPokemonPreview.Location = new System.Drawing.Point(304, 42);
             this.pbPokemonPreview.Name = "pbPokemonPreview";
             this.pbPokemonPreview.Size = new System.Drawing.Size(191, 187);
             this.pbPokemonPreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbPokemonPreview.TabIndex = 16;
             this.pbPokemonPreview.TabStop = false;
             // 
+            // btnAgregarImagen
+            // 
+            this.btnAgregarImagen.Location = new System.Drawing.Point(262, 106);
+            this.btnAgregarImagen.Name = "btnAgregarImagen";
+            this.btnAgregarImagen.Size = new System.Drawing.Size(35, 23);
+            this.btnAgregarImagen.TabIndex = 17;
+            this.btnAgregarImagen.Text = "+";
+            this.btnAgregarImagen.UseVisualStyleBackColor = true;
+            this.btnAgregarImagen.Click += new System.EventHandler(this.btnAgregarImagen_Click);
+            // 
             // frmAltaPokemon
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(564, 299);
+            this.Controls.Add(this.btnAgregarImagen);
             this.Controls.Add(this.pbPokemonPreview);
             this.Controls.Add(this.lblUrlImagen);
             this.Controls.Add(this.tbUrlImagen);
@@ -226,5 +238,6 @@
         private System.Windows.Forms.Label lblUrlImagen;
         private System.Windows.Forms.TextBox tbUrlImagen;
         private System.Windows.Forms.PictureBox pbPokemonPreview;
+        private System.Windows.Forms.Button btnAgregarImagen;
     }
 }
