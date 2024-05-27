@@ -150,11 +150,62 @@ namespace ejemplos_ado_dotnet
 
         }
 
+        public bool validarFiltro () //validaciones por medio de messageBox...
+        {
+            if (cbCampo.SelectedIndex < 0) //si no hay seleccionado nada en el desplegable campo...
+            {
+                MessageBox.Show("Por favor, seleccione el campo para filtrar");
+                return true;
+            }
+
+            if(cbCriterio.SelectedIndex < 0) // si no hay seleccionado nada en el desplegable criterio
+            {
+                MessageBox.Show("Por favor, seleccione el criterio para filtrar");
+                return true;
+            }
+
+            if (cbCampo.SelectedItem.ToString() == "Número") //si elegiste numero...
+            {
+                if (string.IsNullOrEmpty(tbFiltroAvanzado.Text)) 
+                //si el text box del filtro avanzado esta vacio o es nulo...                                        
+                {
+                    MessageBox.Show("Debes cargar el filtro para numericos...");
+                    return true;
+                }
+                if (!(soloNumeros(tbFiltroAvanzado.Text))) //si no cargaste solo numeros...
+                {
+                    MessageBox.Show("Solo nros para ingresar por un campo numerico...");
+                    return true;
+                }
+                
+            }
+
+            return false; //todo ok
+        }
+
+        private bool soloNumeros (string cadena) //para comprobar si solo hay nros...
+        {
+            foreach (char caracter in cadena)
+            {
+                if (!(char.IsNumber(caracter))) //si NO es numero...
+                {
+                    return false;
+                }
+
+            }
+            return true;
+        }
+
         private void btnFiltro_Click(object sender, EventArgs e)
         {
             PokemonNegocio negocio = new PokemonNegocio(); //nos va a devolver una lista
             try
             {
+                if (validarFiltro()) //retorna un bool segun si los desplegables de Campo y Criterio esten vacios o no
+                {
+                    return; //return para detener la ejecucion
+                }
+
                 string campo = cbCampo.SelectedItem.ToString();
                 string criterio = cbCriterio.SelectedItem.ToString();
                 string filtro = tbFiltroAvanzado.Text;
